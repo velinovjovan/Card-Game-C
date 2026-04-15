@@ -13,55 +13,55 @@ const unsigned int m = 714084817;
 const unsigned char iterations = 6;
 
 unsigned char parity(unsigned long long number);
-unsigned char bbs (unsigned long long* x);
-void swap (unsigned int* a, unsigned int* b);
-void shuffle (unsigned int* deck, unsigned long long* x);
+unsigned char bbs(unsigned long long* x);
+void swap(unsigned char* a, unsigned char* b);
+void shuffle(unsigned char* deck, unsigned long long* x);
 
 typedef struct lista {
-    unsigned int info;
+    unsigned char info;
     struct lista* next;
     struct lista* prev;
 } Lista;
 
-void add_front(Lista** head, unsigned int info);
-void add_back(Lista** head, unsigned int info);
-unsigned int remove_front(Lista** head);
-unsigned int remove_back(Lista** head);
-unsigned int look_front(Lista* head);
-unsigned int look_back(Lista* head);
-unsigned int list_size (Lista* head);
-bool list_is_empty (Lista* head);
+void add_front(Lista** head, unsigned char info);
+void add_back(Lista** head, unsigned char info);
+unsigned char remove_front(Lista** head);
+unsigned char remove_back(Lista** head);
+unsigned char look_front(Lista* head);
+unsigned char look_back(Lista* head);
+unsigned char list_size(Lista* head);
+bool list_is_empty(Lista* head);
 
-void push (Lista** stack , unsigned int info);
-unsigned int pop (Lista** stack);
-unsigned int peek (Lista* stack);
-bool stack_is_empty (Lista* stack);
+void push(Lista** stack, unsigned char info);
+unsigned char pop(Lista** stack);
+unsigned char peek(Lista* stack);
+bool stack_is_empty(Lista* stack);
 
 void clearScreen();
 void startScreen();
-void winScreen(unsigned short player);
-void printScreen(unsigned int size1, unsigned int size2, unsigned int curr1, unsigned int curr2, unsigned int o1, unsigned int o2, unsigned int sredina );
-void printTurn(unsigned short turn);
+void winScreen(unsigned char player);
+void printScreen(unsigned char size1, unsigned char size2, unsigned char curr1, unsigned char curr2, unsigned char o1, unsigned char o2, unsigned char sredina);
+void printTurn(unsigned char turn);
 void printMenuTake();
 void printMenuPlace();
 
-void switchTurn(unsigned short* turn);
-long long getSeed();
-bool checkWin (Lista* zatvoren, Lista* otvoren);
-void freeAll (Lista* otvoreni1, Lista* zatvoreni1, Lista* otvoreni2, Lista* zatvoreni2, Lista* sredina);
-void flip (Lista** otvoreni, Lista** zatvoreni);
+void switchTurn(unsigned char* turn);
+unsigned long long getSeed();
+bool checkWin(Lista* zatvoren, Lista* otvoren);
+void freeAll(Lista* otvoreni1, Lista* zatvoreni1, Lista* otvoreni2, Lista* zatvoreni2, Lista* sredina);
+void flip(Lista** otvoreni, Lista** zatvoreni);
 
 int main() {
 
     unsigned char code;
-    unsigned short turn;
-    unsigned int currCard[2] = {0,0};
+    unsigned char turn;
+    unsigned char currCard[2] = {0, 0};
     bool pobeda;
     Lista* zatvoreni[2];
     Lista* otvoreni[2];
     Lista* sredina;
 
-    do{
+    do {
         code = 0;
         turn = 0;
         pobeda = false;
@@ -76,32 +76,30 @@ int main() {
         startScreen();
         getchar();
 
-        unsigned int deck[DECK_SIZE] = {1,2,3,4,5,6,7,8,9,10,11,12,13,1,2,3,4,5,6,7,8,9,10,11,12,13,1,2,3,4,5,6,7,8,9,10,11,12,13,1,2,3,4,5,6,7,8,9,10,11,12,13};
+        unsigned char deck[DECK_SIZE] = {1,2,3,4,5,6,7,8,9,10,11,12,13,1,2,3,4,5,6,7,8,9,10,11,12,13,1,2,3,4,5,6,7,8,9,10,11,12,13,1,2,3,4,5,6,7,8,9,10,11,12,13};
 
-        long long seed = getSeed();
-        shuffle(deck, &seed); // OBA POINTERI
+        unsigned long long seed = getSeed();
+        shuffle(deck, &seed);
 
-        for( size_t i = 0 ; i < DECK_SIZE/2 ; ++i ){
-            add_back(&zatvoreni[0],deck[i]); // init prvi igrac
+        for (size_t i = 0; i < DECK_SIZE / 2; ++i) {
+            add_back(&zatvoreni[0], deck[i]);
         }
 
-        for (size_t i = DECK_SIZE/2 ; i < DECK_SIZE ; ++i){
-            add_back(&zatvoreni[1], deck[i]); // init drugi igrac
+        for (size_t i = DECK_SIZE / 2; i < DECK_SIZE; ++i) {
+            add_back(&zatvoreni[1], deck[i]);
         }
 
-        // glavna petlja
-
-        while(!pobeda){
+        while (!pobeda) {
             code = 0;
             int izbor;
             bool greska = false;
             bool turnEnd = false;
 
-            if(zatvoreni[turn] == NULL) flip(&(otvoreni[turn]), &(zatvoreni[turn]));
+            if (zatvoreni[turn] == NULL) flip(&(otvoreni[turn]), &(zatvoreni[turn]));
 
-            do{
-                do{
-                    do{
+            do {
+                do {
+                    do {
                         clearScreen();
                         printScreen(list_size(zatvoreni[0]), list_size(zatvoreni[1]), currCard[0], currCard[1], peek(otvoreni[0]), peek(otvoreni[1]), peek(sredina));
                         printf("\n");
@@ -109,134 +107,120 @@ int main() {
                         printf("\n");
                         printMenuTake();
                         scanf("%d", &izbor);
-                    }while(izbor < 1 || izbor > 4);
+                    } while (izbor < 1 || izbor > 4);
 
-                    switch(izbor){
-                        case 1 : {
-                            if(!list_is_empty(zatvoreni[turn])){
+                    switch (izbor) {
+                        case 1: {
+                            if (!list_is_empty(zatvoreni[turn])) {
                                 currCard[turn] = remove_back(&(zatvoreni[turn]));
                                 greska = false;
-                            }
-                            else{
+                            } else {
                                 greska = true;
                             }
                             break;
                         }
-
-                        case 2 :  {
-                            if(!stack_is_empty(otvoreni[turn])){
+                        case 2: {
+                            if (!stack_is_empty(otvoreni[turn])) {
                                 currCard[turn] = pop(&(otvoreni[turn]));
                                 greska = false;
-                            }
-                            else{
+                            } else {
                                 greska = true;
                             }
                             break;
                         }
-                        case 3 : {
+                        case 3: {
                             greska = false;
                             code = AGN;
                             break;
                         }
-
-                        case 4 : {
+                        case 4: {
                             greska = false;
                             code = END;
                             break;
                         }
-
                     }
-                    if(code) break;
+                    if (code) break;
 
-                }while(greska);
+                } while (greska);
 
-                if(code) break;
+                if (code) break;
 
-                do{
-                    do{
+                do {
+                    do {
                         clearScreen();
-                        printScreen(list_size(zatvoreni[0]), list_size(zatvoreni[1]), currCard[0], currCard[1], peek(otvoreni[0]), peek(otvoreni[1]),peek(sredina));
+                        printScreen(list_size(zatvoreni[0]), list_size(zatvoreni[1]), currCard[0], currCard[1], peek(otvoreni[0]), peek(otvoreni[1]), peek(sredina));
                         printf("\n");
                         printTurn(turn);
                         printf("\n");
                         printMenuPlace();
                         scanf("%d", &izbor);
-                    }while(izbor < 1 || izbor > 4);
+                    } while (izbor < 1 || izbor > 4);
 
-                    switch(izbor){
-
-                        case 1 : {
-                            if(peek(sredina)%13 == currCard[turn] - 1){
+                    switch (izbor) {
+                        case 1: {
+                            if (peek(sredina) % 13 == currCard[turn] - 1) {
                                 push(&sredina, currCard[turn]);
                                 greska = false;
-                            }
-                            else{
+                            } else {
                                 greska = true;
                             }
                             break;
                         }
-
-                        case 2 : {
-                            unsigned int temp = currCard[turn];
+                        case 2: {
+                            unsigned char temp = currCard[turn];
                             switchTurn(&turn);
 
-                            if(peek(otvoreni[turn])%13 == temp - 1){
-                                push(&(otvoreni[turn]),temp);
+                            if (peek(otvoreni[turn]) % 13 == temp - 1) {
+                                push(&(otvoreni[turn]), temp);
                                 switchTurn(&turn);
                                 greska = false;
-                            }
-                            else{
+                            } else {
                                 switchTurn(&turn);
                                 greska = true;
                             }
                             break;
                         }
-
-                        case 3 : {
-                            push(&(otvoreni[turn]),currCard[turn]);
+                        case 3: {
+                            push(&(otvoreni[turn]), currCard[turn]);
                             greska = false;
                             turnEnd = true;
                             break;
                         }
-
-                        case 4 : {
+                        case 4: {
                             greska = false;
                             code = END;
                             break;
                         }
                     }
-                    if(code) break;
-                }while(greska);
+                    if (code) break;
+                } while (greska);
 
-                if(code) break;
+                if (code) break;
                 currCard[turn] = 0;
-            }while(!turnEnd);
+            } while (!turnEnd);
 
-            if(code) break;
-
-
+            if (code) break;
 
             pobeda = checkWin(zatvoreni[turn], otvoreni[turn]);
             switchTurn(&turn);
             clearScreen();
         }
 
-        freeAll(otvoreni[0],zatvoreni[0],otvoreni[1],zatvoreni[1],sredina);
+        freeAll(otvoreni[0], zatvoreni[0], otvoreni[1], zatvoreni[1], sredina);
 
-    }
-    while(code == AGN);
+    } while (code == AGN);
 
-    if(code != END){
+    if (code != END) {
         clearScreen();
         switchTurn(&turn);
-        winScreen(turn+1);
+        winScreen(turn + 1);
     }
 
     return 0;
 }
 
 
-unsigned char parity(unsigned long long number) { // ne moze pokazivac
+unsigned char parity(unsigned long long number) {
     unsigned char count = 0;
     while (number) {
         count += number & 1;
@@ -245,12 +229,11 @@ unsigned char parity(unsigned long long number) { // ne moze pokazivac
     return count % 2;
 }
 
-unsigned char bbs (unsigned long long* x){ // x == seed
-
+unsigned char bbs(unsigned long long* x) {
     unsigned char bit;
     unsigned char result = 0;
 
-    for( size_t i = 0 ; i < iterations; i ++){
+    for (size_t i = 0; i < iterations; i++) {
         *x = (unsigned long long)((__uint128_t)(*x) * (*x) % m);
         bit = parity(*x);
         result = result << 1;
@@ -260,27 +243,25 @@ unsigned char bbs (unsigned long long* x){ // x == seed
     return result;
 }
 
-void swap (unsigned int* a, unsigned int* b){
-    int t = *a;
+void swap(unsigned char* a, unsigned char* b) {
+    unsigned char t = *a;
     *a = *b;
     *b = t;
 }
 
-void shuffle (unsigned int* deck, unsigned long long* x){
+void shuffle(unsigned char* deck, unsigned long long* x) {
+    unsigned char rand;
 
-    int rand;
-
-    for(size_t i = 0 ; i < DECK_SIZE ; i ++ ){
+    for (size_t i = 0; i < DECK_SIZE; i++) {
         do {
             rand = bbs(x);
-        } while(rand >= DECK_SIZE);
+        } while (rand >= DECK_SIZE);
         swap(&deck[i], &deck[rand]);
     }
-
 }
 
-void add_front(Lista** head, unsigned int info) {
-    Lista* element = calloc(1,sizeof(Lista));
+void add_front(Lista** head, unsigned char info) {
+    Lista* element = calloc(1, sizeof(Lista));
     element->info = info;
     element->prev = NULL;
     element->next = *head;
@@ -289,49 +270,46 @@ void add_front(Lista** head, unsigned int info) {
     *head = element;
 }
 
-void add_back(Lista** head, unsigned int info) {
-    Lista* element = calloc(1,sizeof(Lista));
+void add_back(Lista** head, unsigned char info) {
+    Lista* element = calloc(1, sizeof(Lista));
     element->info = info;
     element->next = NULL;
 
     if (*head == NULL) {
         element->prev = NULL;
         *head = element;
-    }
-    else{
+    } else {
         Lista* temp = *head;
-        while (temp->next != NULL){
+        while (temp->next != NULL) {
             temp = temp->next;
         }
-
         temp->next = element;
         element->prev = temp;
     }
 }
 
-unsigned int remove_front(Lista** head) {
+unsigned char remove_front(Lista** head) {
     if (*head == NULL)
-        return ERR; // Greska
+        return ERR;
 
     Lista* temp = *head;
-    unsigned int info = temp->info;
+    unsigned char info = temp->info;
     *head = (*head)->next;
 
     if (*head != NULL) (*head)->prev = NULL;
 
     free(temp);
-
     return info;
 }
 
-unsigned int remove_back(Lista** head) {
+unsigned char remove_back(Lista** head) {
     if (*head == NULL)
-        return ERR; // Greska
+        return ERR;
 
     Lista* temp = *head;
-    unsigned int info;
+    unsigned char info;
 
-    while (temp->next != NULL){
+    while (temp->next != NULL) {
         temp = temp->next;
     }
 
@@ -340,93 +318,81 @@ unsigned int remove_back(Lista** head) {
 
     info = temp->info;
     free(temp);
-
     return info;
 }
 
-unsigned int look_front(Lista* head) {
-    if (head == NULL) {
-        return ERR; // Greska
-    }
+unsigned char look_front(Lista* head) {
+    if (head == NULL)
+        return ERR;
     return head->info;
 }
 
-unsigned int look_back(Lista* head) {
-    if (head == NULL) {
-        return ERR; // Greska
-    }
+unsigned char look_back(Lista* head) {
+    if (head == NULL)
+        return ERR;
 
     Lista* temp = head;
-    while (temp->next != NULL){
+    while (temp->next != NULL) {
         temp = temp->next;
     }
-
     return temp->info;
 }
 
-unsigned int list_size (Lista* head){
+unsigned char list_size(Lista* head) {
     Lista* temp = head;
-    unsigned int n = 0;
+    unsigned char n = 0;
 
-    while(temp != NULL){
+    while (temp != NULL) {
         n++;
         temp = temp->next;
     }
-
     return n;
 }
 
-bool list_is_empty (Lista* head){
-    if(head == NULL) return true;
-    else return false;
+bool list_is_empty(Lista* head) {
+    return head == NULL;
 }
 
-void push (Lista** stack , unsigned int info){
-    Lista* element = calloc(1,sizeof(Lista));
+void push(Lista** stack, unsigned char info) {
+    Lista* element = calloc(1, sizeof(Lista));
     element->info = info;
     element->next = *stack;
-
     *stack = element;
 }
 
-unsigned int pop (Lista** stack){
-    if(stack == NULL){
-        return ERR; // Greska
-    }
+unsigned char pop(Lista** stack) {
+    if (stack == NULL)
+        return ERR;
 
     Lista* temp = *stack;
-    unsigned int info = temp->info;
+    unsigned char info = temp->info;
 
     *stack = temp->next;
     free(temp);
-
     return info;
 }
 
-unsigned int peek (Lista* stack){
-    if(stack == NULL){
-        return ERR; // Greska
-    }
-
+unsigned char peek(Lista* stack) {
+    if (stack == NULL)
+        return ERR;
     return stack->info;
 }
 
-bool stack_is_empty (Lista* stack){
-    if(stack == NULL) return true;
-    else return false;
+bool stack_is_empty(Lista* stack) {
+    return stack == NULL;
 }
 
-void printScreen(unsigned int size1, unsigned int size2, unsigned int curr1, unsigned int curr2, unsigned int o1, unsigned int o2, unsigned int sredina ){
+void printScreen(unsigned char size1, unsigned char size2, unsigned char curr1, unsigned char curr2, unsigned char o1, unsigned char o2, unsigned char sredina) {
     printf("_______________________________________________________________________________________________________________________\n");
     printf("|                                                                                                                     |\n");
     printf("|                                                                                                                     |\n");
     printf("|                  _____________            _____________            _____________                                    |\n");
     printf("|                  |           |            |           |            |           |                                    |\n");
-    printf("|                  |           |            |%2u         |            |%2u         |                                    |\n", curr1,o1);
+    printf("|                  |           |            |%2u         |            |%2u         |                                    |\n", curr1, o1);
     printf("|    Igrac 1 :     |           |            |           |            |           |                                    |\n");
-    printf("|                  |     %02u    |            |    %2u     |            |    %2u     |                                    |\n", size1, curr1,o1);
+    printf("|                  |     %02u    |            |    %2u     |            |    %2u     |                                    |\n", size1, curr1, o1);
     printf("|                  |           |            |           |            |           |                   sredina          |\n");
-    printf("|                  |           |            |        %2u |            |        %2u |                _____________       |\n", curr1,o1);
+    printf("|                  |           |            |        %2u |            |        %2u |                _____________       |\n", curr1, o1);
     printf("|                  |___________|            |___________|            |___________|                |           |       |\n");
     printf("|                                                                                                 |%2u         |       |\n", sredina);
     printf("|                                                                                                 |           |       |\n");
@@ -436,7 +402,7 @@ void printScreen(unsigned int size1, unsigned int size2, unsigned int curr1, uns
     printf("|                  |           |            |           |            |           |                |___________|       |\n");
     printf("|                  |           |            |%2u         |            |%2u         |                                    |\n", curr2, o2);
     printf("|                  |           |            |           |            |           |                                    |\n");
-    printf("|                  |     %02u    |            |    %2u     |            |    %2u     |                                    |\n", size2, curr2,o2);
+    printf("|                  |     %02u    |            |    %2u     |            |    %2u     |                                    |\n", size2, curr2, o2);
     printf("|    Igrac 2 :     |           |            |           |            |           |                                    |\n");
     printf("|                  |           |            |        %2u |            |        %2u |                                    |\n", curr2, o2);
     printf("|                  |___________|            |___________|            |___________|                                    |\n");
@@ -445,7 +411,7 @@ void printScreen(unsigned int size1, unsigned int size2, unsigned int curr1, uns
     printf("|_____________________________________________________________________________________________________________________|\n");
 }
 
-void startScreen(){
+void startScreen() {
     printf("_______________________________________________________________________________________________________________________\n");
     printf("|                                                                                                                     |\n");
     printf("|                                                                                                                     |\n");
@@ -475,52 +441,51 @@ void startScreen(){
     printf("\n\n");
 }
 
-void winScreen(unsigned short player){
+void winScreen(unsigned char player) {
     printf("_______________________________________________________________________________________________________________________\n");
-        printf("|                                                                                                                     |\n");
-        printf("|                                                                                                                     |\n");
-        printf("|                                                                                                                     |\n");
-        printf("|                                                                                                                     |\n");
-        printf("|                                                                                                                     |\n");
-        printf("|                                                                                                                     |\n");
-        printf("|                                                                                                                     |\n");
-        printf("|                                                                                                                     |\n");
-        printf("|                                                                                                                     |\n");
-        printf("|                                                                                                                     |\n");
-        printf("|                                                                                                                     |\n");
-        printf("|                                            Igrac %hu je pobednik!!!                                                   |\n", player);
-        printf("|                                                                                                                     |\n");
-        printf("|                                                                                                                     |\n");
-        printf("|                                                                                                                     |\n");
-        printf("|                                                                                                                     |\n");
-        printf("|                                                                                                                     |\n");
-        printf("|                                                                                                                     |\n");
-        printf("|                                                                                                                     |\n");
-        printf("|                                                                                                                     |\n");
-        printf("|                                                                                                                     |\n");
-        printf("|                                                                                                                     |\n");
-        printf("|                                                                                                                     |\n");
-        printf("|                                                                                                                     |\n");
-        printf("|_____________________________________________________________________________________________________________________|\n");
+    printf("|                                                                                                                     |\n");
+    printf("|                                                                                                                     |\n");
+    printf("|                                                                                                                     |\n");
+    printf("|                                                                                                                     |\n");
+    printf("|                                                                                                                     |\n");
+    printf("|                                                                                                                     |\n");
+    printf("|                                                                                                                     |\n");
+    printf("|                                                                                                                     |\n");
+    printf("|                                                                                                                     |\n");
+    printf("|                                                                                                                     |\n");
+    printf("|                                                                                                                     |\n");
+    printf("|                                            Igrac %hhu je pobednik!!!                                                   |\n", player);
+    printf("|                                                                                                                     |\n");
+    printf("|                                                                                                                     |\n");
+    printf("|                                                                                                                     |\n");
+    printf("|                                                                                                                     |\n");
+    printf("|                                                                                                                     |\n");
+    printf("|                                                                                                                     |\n");
+    printf("|                                                                                                                     |\n");
+    printf("|                                                                                                                     |\n");
+    printf("|                                                                                                                     |\n");
+    printf("|                                                                                                                     |\n");
+    printf("|                                                                                                                     |\n");
+    printf("|                                                                                                                     |\n");
+    printf("|_____________________________________________________________________________________________________________________|\n");
 }
 
 void clearScreen() {
-    #ifdef _WIN32
-        system("cls");
-    #else
-        system("clear");
-    #endif
+#ifdef _WIN32
+    system("cls");
+#else
+    system("clear");
+#endif
 }
 
-void printTurn(unsigned short turn){
+void printTurn(unsigned char turn) {
     printf("____________________________\n");
     printf("|                          |\n");
-    printf("| Na potezu je : Igrac %d   |\n", turn+1);
+    printf("| Na potezu je : Igrac %hhu   |\n", turn + 1);
     printf("|__________________________|\n");
-
 }
 
-void printMenuTake(){
+void printMenuTake() {
     printf("1 -- Vuci kartu sa sopstvenog zatvorenog spila\n");
     printf("2 -- Vuci kartu sa sopstvenog otvorenog spila\n");
     printf("3 -- Restartuj igru\n");
@@ -529,7 +494,7 @@ void printMenuTake(){
     printf("Unesi izbor: ");
 }
 
-void printMenuPlace(){
+void printMenuPlace() {
     printf("1 -- Postavi izvucenu kartu na sredinu\n");
     printf("2 -- Postavi izvucenu kartu kod protivnika\n");
     printf("3 -- Postavi izvucenu kartu na sopstveni otvoreni spil\n");
@@ -538,15 +503,14 @@ void printMenuPlace(){
     printf("Unesi izbor: ");
 }
 
-void switchTurn(unsigned short* turn){
-    if(*turn == 0) *turn = 1;
-    else *turn = 0;
+void switchTurn(unsigned char* turn) {
+    *turn = (*turn == 0) ? 1 : 0;
 }
 
-long long getSeed(){
+unsigned long long getSeed() {
     long long seed;
 
-    do{
+    do {
         clearScreen();
 
         printf("_______________________________________________________________________________________________________________________\n");
@@ -579,39 +543,26 @@ long long getSeed(){
         printf("Klica : ");
         scanf("%lld", &seed);
 
-    }while(seed <=1);
+    } while (seed <= 1);
+
     clearScreen();
-
-    return seed;
+    return (unsigned long long)seed;
 }
 
-bool checkWin (Lista* zatvoren, Lista* otvoren){
-    if(list_is_empty(zatvoren) && stack_is_empty(otvoren)) return true;
-    else return false;
+bool checkWin(Lista* zatvoren, Lista* otvoren) {
+    return list_is_empty(zatvoren) && stack_is_empty(otvoren);
 }
 
-void freeAll (Lista* otvoreni1, Lista* zatvoreni1, Lista* otvoreni2, Lista* zatvoreni2, Lista* sredina){
-
-    while(otvoreni1 != NULL){
-        pop(&otvoreni1);
-    }
-    while(otvoreni2 != NULL){
-        pop(&otvoreni2);
-    }
-    while(zatvoreni1 != NULL){
-        remove_front(&zatvoreni1);
-    }
-    while(zatvoreni2 != NULL){
-        remove_front(&zatvoreni2);
-    }
-    while(sredina != NULL){
-        pop(&sredina);
-    }
+void freeAll(Lista* otvoreni1, Lista* zatvoreni1, Lista* otvoreni2, Lista* zatvoreni2, Lista* sredina) {
+    while (otvoreni1 != NULL)  pop(&otvoreni1);
+    while (otvoreni2 != NULL)  pop(&otvoreni2);
+    while (zatvoreni1 != NULL) remove_front(&zatvoreni1);
+    while (zatvoreni2 != NULL) remove_front(&zatvoreni2);
+    while (sredina != NULL)    pop(&sredina);
 }
 
-void flip (Lista** otvoreni, Lista** zatvoreni){
-    while(*otvoreni != NULL){
-        add_back(zatvoreni,pop(otvoreni));
+void flip(Lista** otvoreni, Lista** zatvoreni) {
+    while (*otvoreni != NULL) {
+        add_back(zatvoreni, pop(otvoreni));
     }
 }
-
