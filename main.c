@@ -382,29 +382,56 @@ bool stack_is_empty(Lista* stack) {
     return stack == NULL;
 }
 
+void cardToStr(unsigned char card, char* out) {
+    if (card == 0) {
+        snprintf(out, 3, " ");
+        return;
+    }
+
+    unsigned char v = card % 13;
+    if (v == 0) v = 13;
+
+    switch (v) {
+        case 1:  snprintf(out, 3, "A"); break;
+        case 11: snprintf(out, 3, "J"); break;
+        case 12: snprintf(out, 3, "Q"); break;
+        case 13: snprintf(out, 3, "K"); break;
+        default: snprintf(out, 3, "%u", v); break;
+    }
+}
+
 void printScreen(unsigned char size1, unsigned char size2, unsigned char curr1, unsigned char curr2, unsigned char o1, unsigned char o2, unsigned char sredina) {
+
+    char c1[3], c2[3], o1s[3], o2s[3], s[3];
+
+    cardToStr(curr1, c1);
+    cardToStr(curr2, c2);
+    cardToStr(o1, o1s);
+    cardToStr(o2, o2s);
+    cardToStr(sredina, s);
+
     printf("_______________________________________________________________________________________________________________________\n");
     printf("|                                                                                                                     |\n");
     printf("|                                                                                                                     |\n");
     printf("|                  _____________            _____________            _____________                                    |\n");
     printf("|                  |           |            |           |            |           |                                    |\n");
-    printf("|                  |           |            |%2u         |            |%2u         |                                    |\n", curr1, o1);
+    printf("|                  |           |            |%2s         |            |%2s         |                                    |\n", c1, o1s);
     printf("|    Igrac 1 :     |           |            |           |            |           |                                    |\n");
-    printf("|                  |     %02u    |            |    %2u     |            |    %2u     |                                    |\n", size1, curr1, o1);
+    printf("|                  |     %02u    |            |    %2s     |            |    %2s     |                                    |\n", size1, c1, o1s);
     printf("|                  |           |            |           |            |           |                   sredina          |\n");
-    printf("|                  |           |            |        %2u |            |        %2u |                _____________       |\n", curr1, o1);
+    printf("|                  |           |            |        %2s |            |        %2s |                _____________       |\n", c1, o1s);
     printf("|                  |___________|            |___________|            |___________|                |           |       |\n");
-    printf("|                                                                                                 |%2u         |       |\n", sredina);
+    printf("|                                                                                                 |%2s         |       |\n", s);
     printf("|                                                                                                 |           |       |\n");
-    printf("|                zatvoreni spilovi          trenutna karta          otvoreni spilovi              |    %2u     |       |\n", sredina);
+    printf("|                zatvoreni spilovi          trenutna karta          otvoreni spilovi              |    %2s     |       |\n", s);
     printf("|                                                                                                 |           |       |\n");
-    printf("|                  _____________            _____________            _____________                |        %2u |       |\n", sredina);
+    printf("|                  _____________            _____________            _____________                |        %2s |       |\n", s);
     printf("|                  |           |            |           |            |           |                |___________|       |\n");
-    printf("|                  |           |            |%2u         |            |%2u         |                                    |\n", curr2, o2);
+    printf("|                  |           |            |%2s         |            |%2s         |                                    |\n", c2, o2s);
     printf("|                  |           |            |           |            |           |                                    |\n");
-    printf("|                  |     %02u    |            |    %2u     |            |    %2u     |                                    |\n", size2, curr2, o2);
+    printf("|                  |     %02u    |            |    %2s     |            |    %2s     |                                    |\n", size2, c2, o2s);
     printf("|    Igrac 2 :     |           |            |           |            |           |                                    |\n");
-    printf("|                  |           |            |        %2u |            |        %2u |                                    |\n", curr2, o2);
+    printf("|                  |           |            |        %2s |            |        %2s |                                    |\n", c2, o2s);
     printf("|                  |___________|            |___________|            |___________|                                    |\n");
     printf("|                                                                                                                     |\n");
     printf("|                                                                                                                     |\n");
